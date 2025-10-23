@@ -4,22 +4,85 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invitation</title>
   <link rel="stylesheet" href="style.css">
 </head>
-	
+
 <body>
-    
-  <main>
-    <a href="https://maps.app.goo.gl/vSG3ra1MngTogTKm7" target="_blank">
-      <i class="fab fa-medium">&nbsp;</i> บ้าน
-    </a>
-    <a href="https://maps.app.goo.gl/TSXQArDPNTSUYTxT6" target="_blank">
-      <i class="fab fa-github">&nbsp;</i> วัดปราสาท
-    </a>
-    <a href="https://maps.app.goo.gl/GAGzpygVLeqtF5159" target="_blank">
-      <i class="fab fa-itunes-note">&nbsp;</i> อาคารอเนกประสงค์
-    </a>
+  <main class="invitation" aria-live="polite">
+    <button class="envelope" type="button" aria-label="Open invitation" aria-expanded="false">
+      <span class="envelope__back" aria-hidden="true"></span>
+      <span class="envelope__inside" aria-hidden="true"></span>
+      <span class="envelope__letter" aria-hidden="true"></span>
+      <span class="envelope__front" aria-hidden="true"></span>
+      <span class="envelope__flap" aria-hidden="true"></span>
+    </button>
+    <p class="envelope__prompt" aria-hidden="true">กดเพื่อเปิดจดหมาย</p>
+    <p class="envelope__status" aria-hidden="true">กำลังเปิดจดหมาย...</p>
+
+    <section class="invitation__content" aria-hidden="true" hidden>
+      <h1>You're Invited</h1>
+      <p>We can't wait to see you. Choose a spot below to open the map.</p>
+      <div class="location-links">
+        <a href="https://maps.app.goo.gl/vSG3ra1MngTogTKm7" target="_blank" rel="noopener">
+          <span>บ้าน</span>
+        </a>
+        <a href="https://maps.app.goo.gl/TSXQArDPNTSUYTxT6" target="_blank" rel="noopener">
+          <span>วัดปราสาท</span>
+        </a>
+        <a href="https://maps.app.goo.gl/GAGzpygVLeqtF5159" target="_blank" rel="noopener">
+          <span>อาคารอเนกประสงค์</span>
+        </a>
+      </div>
+    </section>
   </main>
-  
+
+  <script>
+    const invitation = document.querySelector('.invitation');
+    const envelopeButton = document.querySelector('.envelope');
+    const content = document.querySelector('.invitation__content');
+    const prompt = document.querySelector('.envelope__prompt');
+    const status = document.querySelector('.envelope__status');
+    let revealTimeout;
+
+    const revealContent = () => {
+      if (!invitation || invitation.classList.contains('show-content')) return;
+
+      invitation.classList.add('show-content');
+      if (envelopeButton) {
+        envelopeButton.setAttribute('aria-hidden', 'true');
+        envelopeButton.style.display = 'none';
+      }
+      if (prompt) {
+        prompt.setAttribute('hidden', '');
+        prompt.setAttribute('aria-hidden', 'true');
+      }
+      if (status) {
+        status.setAttribute('hidden', '');
+        status.setAttribute('aria-hidden', 'true');
+      }
+      if (content) {
+        content.hidden = false;
+        content.setAttribute('aria-hidden', 'false');
+      }
+    };
+
+    envelopeButton?.addEventListener('click', () => {
+      if (invitation.classList.contains('open')) return;
+
+      invitation.classList.add('open');
+      envelopeButton.setAttribute('aria-expanded', 'true');
+      envelopeButton.setAttribute('disabled', 'true');
+      status?.removeAttribute('hidden');
+      status?.setAttribute('aria-hidden', 'false');
+      revealTimeout = window.setTimeout(revealContent, 1200);
+    });
+
+    envelopeButton?.addEventListener('animationend', (event) => {
+      if (event.animationName !== 'envelopeLift') return;
+      window.clearTimeout(revealTimeout);
+      revealContent();
+    });
+  </script>
 </body>
 </html>

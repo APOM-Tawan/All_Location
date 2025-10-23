@@ -6,56 +6,328 @@
     --font: 'Prompt', sans-serif;
 }
 
-html {
-    height: 100%;  /* fill viewport height for flex centering */
-    background: url('./images/Location.png');
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-attachment: fixed;
-    background-position: 50% center;
+*, *::before, *::after {
+    box-sizing: border-box;
+}
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+html {
+    min-height: 100%;
+    background: url('./images/web_background.svg') center/cover no-repeat;
+    background-attachment: fixed;
 }
 
 body {
-    height: 85%;
-    width: 70%;  
-    margin: 0;     /* remove default margin */
-
-    /* flex center content vertically and horizontally */
+    min-height: 100vh;
+    margin: 0;
+    padding: clamp(24px, 6vw, 80px) clamp(16px, 6vw, 120px);
     display: flex;
-    justify-content: center;
     align-items: center;
-    flex-direction: column;
+    justify-content: center;
     text-align: center;
-}
-
-main {
-    max-width: 700px;
-    width: 100%;
-    padding: 0 20px;
-}
-
-/* LINKS */
-a {
+    font-family: var(--font);
     color: var(--textColor);
+}
+
+.invitation {
+    min-height: 100vh;
+    width: min(90vw, 520px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(20px, 4vw, 32px);
+    perspective: 1400px;
+}
+
+.envelope {
+    position: relative;
+    width: min(100%, 420px);
+    aspect-ratio: 4 / 3;
+    transform-style: preserve-3d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    padding: 0 0 clamp(48px, 8vw, 72px);
+    cursor: pointer;
+    filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.35));
+}
+
+.invitation:not(.open) .envelope {
+    animation: envelopeFloat 6s ease-in-out infinite;
+}
+
+.envelope__back {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(145deg, #fce6a5 0%, #fcd566 45%, #f8c144 100%);
+    border-radius: 0 0 22px 22px;
+    z-index: 0;
+}
+
+.envelope__inside {
+    position: absolute;
+    inset: 10% 10% 30%;
+    background: linear-gradient(150deg, #f8e1a3 0%, #f4c86e 55%, #efb246 100%);
+    clip-path: polygon(0 0, 100% 0, 100% 66%, 50% 100%, 0 66%);
+    border-radius: 0 0 18px 18px;
+    opacity: 0;
+    transform: translateY(18px) scale(0.94);
+    transition: transform 0.6s ease, opacity 0.6s ease;
+    z-index: 1;
+}
+
+.envelope__letter {
+    position: absolute;
+    inset: 12% 10% 16%;
+    background: #fffef7;
+    border-radius: 0 0 18px 18px;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+    transform: translateY(28px);
+    opacity: 0;
+    transition: transform 0.7s ease, opacity 0.6s ease;
+    z-index: 2;
+}
+
+.envelope__front {
+    position: absolute;
+    inset: 0;
+    clip-path: polygon(0 44%, 50% 84%, 100% 44%, 100% 100%, 0 100%);
+    background: linear-gradient(130deg, #fbd358 0%, #edbb3a 100%);
+    border-radius: 0 0 22px 22px;
+    z-index: 3;
+    transition: transform 0.6s ease;
+}
+
+.envelope__triangle {
+    position: absolute;
+    left: 6%;
+    right: 6%;
+    bottom: 16%;
+    height: 30%;
+    background: linear-gradient(175deg, #f2be4e 0%, #d4932f 70%, #b7771d 100%);
+    clip-path: polygon(0 100%, 50% 26%, 100% 100%);
+    transform-origin: center bottom;
+    transform: translateY(42px) scale(0.82);
+    opacity: 0;
+    transition: transform 0.65s ease, opacity 0.55s ease;
+    z-index: 4;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.22);
+}
+
+.envelope__flap {
+    position: absolute;
+    inset: 0;
+    clip-path: polygon(0 0, 100% 0, 50% 58%);
+    background: linear-gradient(145deg, #ffe08a 0%, #fcd566 50%, #f3ba3d 100%);
+    transform-origin: top center;
+    z-index: 4;
+    transition: transform 0.8s cubic-bezier(0.64, 0.02, 0.26, 0.96), opacity 0.5s ease;
+    backface-visibility: hidden;
+    border-radius: 0 0 22px 22px;
+}
+
+.envelope:focus-visible {
+    outline: 3px solid rgba(255, 255, 255, 0.75);
+    outline-offset: 6px;
+}
+
+.envelope:active {
+    transform: scale(0.985);
+}
+
+.envelope[disabled] {
+    cursor: default;
+}
+
+.invitation.show-content {
+    gap: clamp(32px, 6vw, 44px);
+}
+
+.envelope__status,
+.envelope__prompt {
+    margin: 0;
+    font-size: clamp(18px, 3.5vw, 22px);
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+}
+
+.envelope__prompt {
+    transition: opacity 0.4s ease;
+}
+
+.envelope__status {
+    opacity: 0;
+    transform: translateY(0);
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+}
+
+.invitation.open .envelope__prompt {
+    opacity: 0;
+}
+
+.invitation.open .envelope__status {
+    opacity: 1;
+}
+
+.invitation.show-content .envelope__prompt,
+.invitation.show-content .envelope__status {
+    display: none;
+}
+
+.invitation.open .envelope__inside {
+    opacity: 1;
+    transform: translateY(-4px) scale(1);
+}
+
+.invitation.open .envelope__letter {
+    transform: translateY(-36px);
+    opacity: 1;
+}
+
+.invitation.open .envelope__front {
+    transform: translateY(8px);
+}
+
+.invitation.open .envelope__flap {
+    transform: rotateX(-175deg) translateY(-6px);
+    opacity: 0;
+}
+
+.invitation.open .envelope__liner {
+    opacity: 1;
+    transform: translateY(-6px) scale(1.02);
+}
+
+.invitation.open .envelope__triangle {
+    opacity: 1;
+    transform: translateY(-8px) scale(1);
+}
+
+.invitation.open .envelope {
+    animation: envelopeLift 0.9s ease forwards;
+}
+
+.invitation__content {
+    width: min(90vw, 540px);
+    padding: clamp(28px, 6vw, 48px);
+    border-radius: 28px;
+    background: rgba(255, 254, 247, 0.95);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+    color: #1f1f1f;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(40px) scale(0.92);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    pointer-events: none;
+}
+
+.invitation.show-content .invitation__content {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    animation: cardPop 0.6s ease;
+    pointer-events: auto;
+}
+
+.invitation__content h1 {
+    margin: 0 0 12px;
+    font-size: clamp(28px, 5vw, 38px);
+    font-weight: 700;
+    color: #a56a03;
+}
+
+.invitation__content p {
+    margin: 0 0 clamp(20px, 4vw, 32px);
+    font-size: clamp(16px, 3vw, 18px);
+    color: #4a3a16;
+}
+
+.location-links {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(16px, 3.5vw, 24px);
+}
+
+.location-links a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: clamp(18px, 4.5vw, 24px);
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(252, 213, 102, 0.9), rgba(236, 182, 52, 0.9));
+    border: 2px solid rgba(165, 106, 3, 0.2);
     text-decoration: none;
-    background-color: #D6A660;
-    border: 2px solid var(--textColor);
-    border-radius: 20px;
+    color: #2e230d;
+    font-weight: 600;
+    font-size: clamp(16px, 3vw, 20px);
+    box-shadow: 0 10px 18px rgba(0, 0, 0, 0.18);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
 
-    display: block;
-    margin: 30px auto;
-    padding: 30px;
+.location-links a:hover,
+.location-links a:focus-visible {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 26px rgba(0, 0, 0, 0.26);
+}
 
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+.location-links .icon {
+    font-size: clamp(22px, 5vw, 28px);
+}
 
-    font-size: 20px;             /* Text size */
-    font-weight: 700;            /* Bold text */
-    font-style: normal;          /* Normal style */
-    font-family: var(--font);    /* Use Prompt font */
-    transition: 0.2s;
+@keyframes envelopeFloat {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+@keyframes envelopeLift {
+    0% {
+        transform: translateY(0) scale(1);
+    }
+    100% {
+        transform: translateY(-22px) scale(0.98);
+    }
+}
+
+@keyframes cardPop {
+    0% {
+        opacity: 0;
+        transform: translateY(32px) scale(0.85);
+    }
+    60% {
+        opacity: 1;
+        transform: translateY(-6px) scale(1.02);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: clamp(24px, 8vw, 60px) clamp(18px, 8vw, 40px);
+    }
+
+    html {
+        background: url('./images/web_background_mobile.svg') center/cover no-repeat;
+        background-attachment: scroll; /* avoid jitter on mobile */
+    }
+
+    .invitation__content {
+        text-align: center;
+    }
+
+    .location-links a {
+        justify-content: center;
+    }
 }
