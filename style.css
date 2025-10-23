@@ -14,6 +14,7 @@ html {
     min-height: 100%;
     background: url('./images/web_background.svg') center/cover no-repeat;
     background-attachment: fixed;
+    overflow: hidden;
 }
 
 body {
@@ -26,6 +27,7 @@ body {
     text-align: center;
     font-family: var(--font);
     color: var(--textColor);
+    overflow: hidden;
 }
 
 .invitation {
@@ -68,7 +70,7 @@ body {
 
 .envelope__inside {
     position: absolute;
-    inset: 10% 10% 30%;
+    inset: 8% 8% 26%;
     background: linear-gradient(150deg, #f8e1a3 0%, #f4c86e 55%, #efb246 100%);
     clip-path: polygon(0 0, 100% 0, 100% 66%, 50% 100%, 0 66%);
     border-radius: 0 0 18px 18px;
@@ -80,7 +82,7 @@ body {
 
 .envelope__letter {
     position: absolute;
-    inset: 12% 10% 16%;
+    inset: 8% 8% 12%;
     background: #fffef7;
     border-radius: 0 0 18px 18px;
     box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
@@ -143,6 +145,21 @@ body {
 
 .invitation.show-content {
     gap: clamp(32px, 6vw, 44px);
+}
+
+.envelope__message-wrapper {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 100%;
+    min-height: clamp(26px, 4vw, 34px);
+    pointer-events: none;
+}
+
+.envelope__message-wrapper .envelope__prompt,
+.envelope__message-wrapper .envelope__status {
+    grid-area: 1 / 1;
+    justify-self: center;
 }
 
 .envelope__status,
