@@ -147,6 +147,10 @@ body {
     gap: clamp(32px, 6vw, 44px);
 }
 
+.invitation.show-content .envelope__message-wrapper {
+    display: none;
+}
+
 .envelope__message-wrapper {
     position: relative;
     display: grid;
